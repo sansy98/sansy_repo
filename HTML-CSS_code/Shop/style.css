@@ -1,0 +1,101 @@
+body{
+   background-image: linear-gradient(to right, #850d85, #ab0b75, #c52764, #d54754, #dd6749, #dd6749, #dd6749, #dd6749, #d54754, #c52764, #ab0b75, #850d85);
+   background-size: auto;
+   background-repeat:repeat;
+}
+
+ul{
+  text-align: center;
+  list-style-position: inside;
+}
+
+a{
+  background-color: rgba(255,255,255,0.4);
+}
+
+.elementos{
+  background: rgba(0,0,0,0);
+}
+
+.titulos{
+  color: white;
+  font-family: calibri;
+  text-align: center;
+}
+
+.div2center{
+  text-align: center;
+}
+
+#logo{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#AN1{
+  color: cyan;
+  font-family: verdana;
+  text-align: center;
+  background-color: rgba(0,0,0,20);
+  vertical-align: middle;
+}
+
+#AN1img{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#ComprarYa{
+  padding: 15px;
+  background-color: white;
+  background-clip: padding-box;
+  text-align: center;
+  color: white;
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 20px;
+  border-style: solid;
+  border-width: 7px;
+  border-color: blue;
+  border-radius: 5px;
+}
+
+#precios{
+  text-align: center;
+  font-size: 50px;
+  color: white;
+  font-family: serif;
+}
+
+#larre{
+  text-align: center;
+  color: yellow;
+  font-size: 30px;
+  font-family: fantasy;
+  font-weight: bold;
+  font-style: italic;
+}
+
+#separador{
+  text-align: center;
+  color: grey;
+  font-weight: bold;
+}
+
+#terminos{
+  text-align: justify;
+  color: grey;
+  font-family: monospace;
+  font-size: 17px;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+#fin{
+  color: white;
+  background-color: black;
+  border-style: solid;
+  border-width: 2px;
+  border-color: white;
+}
