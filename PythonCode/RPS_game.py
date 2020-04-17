@@ -1,4 +1,3 @@
-
 from random import choice
 
 options = ["R", "P", "S"]
