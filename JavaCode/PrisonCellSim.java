@@ -1,6 +1,6 @@
 public class PRESO
 {
-    // instance variables - replace the example below with your own
+    // instance variables 
     public int ID;
     public String name;
     public String surname;
