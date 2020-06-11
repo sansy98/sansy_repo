@@ -19,7 +19,7 @@ namespace PalindroCheck
             int c = word.Length - 1; 
             foreach (char i in invcharray) 
             {
-                charray = word.ToCharArray(); //Charray value gets restored to ensure that the original array does't invert as well
+                charray = word.ToCharArray(); //Charray value gets restored to ensure that the original array doesn't invert
                 invcharray[r] = (char)charray.GetValue(c);
                 r++;
                 c--;
