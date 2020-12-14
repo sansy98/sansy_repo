@@ -48,7 +48,7 @@ while running:
         curr_color = bonkColorChange(curr_color);
 
     screen.fill(pygame.Color(0,0,0,0));
-    pygame.draw.rect(screen, (255,172,255), rect, 1);
+    pygame.draw.rect(screen, BLACK, rect, 1);
     screen.blit(logo,rect);
     pygame.display.update();
 
