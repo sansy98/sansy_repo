@@ -13,6 +13,7 @@ width, height = size;
 pygame.init();
 screen = pygame.display.set_mode(size);
 pygame.display.set_caption("Go to horny jail");
+pygame.display.set_icon(pygame.image.load("logo.png"));
 running = True;
 debug = False;
 clock = pygame.time.Clock();
@@ -22,13 +23,13 @@ jpcPoints = 0;
 npcPoints = 0;
 
 
-ball = pygame.image.load("PythonCode/ponk/ball.png");
-jpcPaddle = pygame.image.load("PythonCode/ponk/paddle.png");
-npcPaddle = pygame.image.load("PythonCode/ponk/paddle.png");
-pongEffect = pygame.mixer.Sound("PythonCode/ponk/pong.ogg");
-bonkEffect = pygame.mixer.Sound("PythonCode/ponk/bonk.ogg");
-font = pygame.font.Font("PythonCode/ponk/dot.ttf", 50);
-fontDebug = pygame.font.Font("PythonCode/ponk/dot.ttf", 15)
+ball = pygame.image.load("ball.png");
+jpcPaddle = pygame.image.load("paddle.png");
+npcPaddle = pygame.image.load("paddle.png");
+pongEffect = pygame.mixer.Sound("pong.wav");
+bonkEffect = pygame.mixer.Sound("bonk.wav");
+font = pygame.font.Font("dot.ttf", 50);
+fontDebug = pygame.font.Font("dot.ttf", 15)
 jpcRect = jpcPaddle.get_rect();
 jpcRect = jpcRect.move(50, 375);
 npcRect = npcPaddle.get_rect();
