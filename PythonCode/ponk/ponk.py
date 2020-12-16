@@ -16,6 +16,7 @@ pygame.display.set_caption("Go to horny jail");
 pygame.display.set_icon(pygame.image.load("logo.png"));
 running = True;
 debug = False;
+main_menu = True;
 clock = pygame.time.Clock();
 lastCollide = None;
 mode = random.randint(0, 1);
@@ -37,32 +38,87 @@ npcRect = npcRect.move(width - 70, 375);
 ballRect = ball.get_rect();
 ballRect = ballRect.move(random.choice(range(600, 700)), random.choice(range(500, 600)));
 speed = [random.choice(range(8, 11)),random.choice(range(8, 11))];
-if mode == 1: speed = [random.choice((-8, 8)), random.choice((-8, 8))]
+if mode == 1: speed = [random.choice((-8, 8)), random.choice((-8, 8))];
 
 def restartBall(ballRect, lastCollide):
     ballRect.x = random.choice(range(600, 700));
     ballRect.y = random.choice(range(500, 600));
-    lastCollide = datetime.now();
+    lastCollide = pygame.time.get_ticks();
 
+def getNewSpeed(s):
+    if s > 0:   x = random.randint(-s, s);
+    elif s < 0: x = random.randint(s, -s);
+    elif s == 0: x = random.randint(-8, 8);
+    return x;
 
 while running:
 
+    blink = 0;
+    blinkState = 0;
+    while main_menu:
+        clock.tick(60);
+        for event in pygame.event.get(): 
+            if event.type == KEYDOWN:
+                if event.key == K_f and main_menu: main_menu = False;    
+                if event.key == K_SPACE and not main_menu and not debug: debug = True;
+                elif event.key == K_SPACE and not main_menu and debug: debug = False;
+            if event.type == QUIT:
+                main_menu = False; 
+                running = False;
+
+        screen.fill(BLACK);
+
+        debugBlinkTxt = fontDebug.render(str(blink), True, WHITE);
+        debugBlinkTxtRect = debugBlinkTxt.get_rect();
+        debugBlinkTxtRect = debugBlinkTxtRect.move(20, 20);
+        pygame.draw.rect(screen, BLACK, debugBlinkTxtRect, 1);
+        screen.blit(debugBlinkTxt, debugBlinkTxtRect);
+
+        if blink < 15: initMenuTxt = font.render("PRESS [F] TO START", True, WHITE);
+        elif blink > 15: initMenuTxt = font.render("PRESS [F] TO START", True, BLACK);
+        initMenuTxtRect = initMenuTxt.get_rect();
+        initMenuTxtRect.center = (width//2, height//2);
+        pygame.draw.rect(screen, BLACK, initMenuTxtRect, 1);
+        screen.blit(initMenuTxt, initMenuTxtRect);
+        pygame.display.update();
+        if blinkState == 0: blink += 1;
+        elif blinkState == 1: blink -= 1;
+        if blink >= 30 and blinkState == 0: blinkState = 1;
+        elif blink <= 0 and blinkState == 1: blinkState = 0;
+
+
+    if not running:
+        break;
+
     clock.tick(60);
     for event in pygame.event.get(): 
-        if event.type == KEYDOWN:    
-            if event.key == K_SPACE and not debug: debug = True;
-            elif event.key == K_SPACE and debug: debug = False;
-        if event.type == QUIT: running = False;
-
+        if event.type == KEYDOWN:
+            if event.key == K_f and main_menu: main_manu = False;    
+            if event.key == K_SPACE and not main_menu and not debug: debug = True;
+            elif event.key == K_SPACE and not main_menu and debug: debug = False;
+        if event.type == QUIT: 
+            running = False;
+        
     if ((ballRect.colliderect(jpcRect) and ballRect.top != jpcRect.bottom and ballRect.bottom != jpcRect.top) or (ballRect.colliderect(npcRect) and ballRect.top != npcRect.bottom and ballRect.bottom != npcRect.top)):
-        if lastCollide is None or (datetime.now() - lastCollide).seconds > 0.4:
-            lastCollide = datetime.now();
-            pongEffect.play();
-            speed[0] = -speed[0];
-            if mode == 1: speed[1] = -speed[1];          
+        if mode == 1:
+            if lastCollide is None or (pygame.time.get_ticks() - lastCollide) > 10:
+                lastCollide = pygame.time.get_ticks();
+                pongEffect.play();
+                speed[0] = -speed[0];
+                speed[1] = getNewSpeed(speed[1]);  
+        if mode == 0:
+            if lastCollide is None or (pygame.time.get_ticks() - lastCollide) > 10:
+                lastCollide = pygame.time.get_ticks();
+                pongEffect.play();
+                speed[0] = -speed[0];      
     if (ballRect.top < 150 or ballRect.bottom > height or (ballRect.colliderect(jpcRect) and (ballRect.top == jpcRect.bottom or ballRect.bottom == jpcRect.top)) or (ballRect.colliderect(npcRect) and (ballRect.top == npcRect.bottom or ballRect.bottom == npcRect.top))):
-        pongEffect.play();
-        speed[1] = -speed[1];
+        if mode == 1:
+            lastCollide = pygame.time.get_ticks();
+            pongEffect.play();
+            speed[1] = -speed[1];
+        elif mode == 0:
+            pongEffect.play();
+            speed[1] = -speed[1];
     if ballRect.left < 0:
         bonkEffect.play();
         restartBall(ballRect, lastCollide);
@@ -112,8 +168,20 @@ while running:
         lastCollideTxtRect = lastCollideTxtRect.move(10, 90);
         pygame.draw.rect(screen, BLACK, lastCollideTxtRect, 1);
         screen.blit(lastCollideTxt, lastCollideTxtRect);
-
+        if not lastCollide == None:
+            if  (pygame.time.get_ticks() - lastCollide) > 10: canCollide = True;
+            else: canCollide = False;
+        else: canCollide = True;
+        if lastCollide != None: canCollideTxt = fontDebug.render("Collides?: " + str(canCollide) + " || " + str(pygame.time.get_ticks() - lastCollide) + " ms", True, WHITE);
+        else: canCollideTxt = fontDebug.render("Collides?: NULL", True, WHITE);
+        canCollideTxtRect = canCollideTxt.get_rect();
+        canCollideTxtRect = canCollideTxtRect.move(10, 130);
+        pygame.draw.rect(screen, BLACK, canCollideTxtRect, 1);
+        screen.blit(canCollideTxt, canCollideTxtRect);
     pygame.display.update();
+
+
+pygame.display.update();
 
 
 pygame.quit();
