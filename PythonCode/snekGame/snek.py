@@ -2,7 +2,7 @@ import pygame as pg
 from pygame.locals import *
 import math
 
-CELL = 20;
+#CELL = 20;
 
 class bodyPart():
     def __init__(self, x, y):
@@ -11,10 +11,11 @@ class bodyPart():
         
 
 class Snake():
-    def __init__(self, bodies = [bodyPart(620, 60), bodyPart(600, 60)], direction = (1, 0), waitT = pg.time.get_ticks()):
+    def __init__(self, bodies = [bodyPart(620, 60), bodyPart(600, 60)], direction = (1, 0), waitT = pg.time.get_ticks(), lastDrift = pg.time.get_ticks()):
         self.bodies = bodies;
         self.direction = direction;
         self.waitT = waitT;
+        self.lastDrift = lastDrift;
 
     def updateLocVars(self):
         for body in self.bodies:
@@ -25,12 +26,20 @@ class Snake():
     def update(self):
         #Snake direction update
         pressed = pg.key.get_pressed();
-        if pressed[pg.K_RIGHT] and self.direction != (-1, 0): self.direction = (1, 0);
-        elif pressed[pg.K_LEFT] and self.direction != (1, 0): self.direction = (-1, 0);
-        elif pressed[pg.K_DOWN] and self.direction != (0, -1): self.direction = (0, 1);
-        elif pressed[pg.K_UP] and self.direction != (0, 1): self.direction = (0, -1);
-        #Snake movement update
-        if pg.time.get_ticks() - self.waitT > 100:
+        if pressed[pg.K_RIGHT] and self.direction != (-1, 0) and pg.time.get_ticks() - self.lastDrift > 120: 
+            self.direction = (1, 0);
+            self.lastDrift = pg.time.get_ticks();
+        elif pressed[pg.K_LEFT] and self.direction != (1, 0) and pg.time.get_ticks() - self.lastDrift > 120: 
+            self.direction = (-1, 0);
+            self.lastDrift = pg.time.get_ticks();
+        elif pressed[pg.K_DOWN] and self.direction != (0, -1) and pg.time.get_ticks() - self.lastDrift > 120: 
+            self.direction = (0, 1);
+            self.lastDrift = pg.time.get_ticks();
+        elif pressed[pg.K_UP] and self.direction != (0, 1) and pg.time.get_ticks() - self.lastDrift > 120: 
+            self.direction = (0, -1);
+            self.lastDrift = pg.time.get_ticks();
+        #Snake movement and prevs update
+        if pg.time.get_ticks() - self.waitT > 70:
             self.move();
         self.updateLocVars();
         #Draw updated snake   
@@ -48,8 +57,15 @@ class Snake():
             
     def draw(self):
         for body in self.bodies:
-            pg.draw.rect(screen, (255, 0, 0), Rect(body.x, body.y, 20, 20));
-       # pg.draw.rect(screen, (255, 0, 0), Rect(self.bodies[-1].x, self.bodies[-1].y, 20, 20));
+            pg.draw.rect(screen, (0, 255, 0), Rect(body.x, body.y, 20, 20));
+    
+    def grow(self):
+        self.bodies.append(bodyPart(globals().get("PrevX" + str(self.bodies.index(self.bodies[-1]))), globals().get("PrevY" + str(self.bodies.index(self.bodies[-1])))));
+
+
+class Food():
+    pass;
+
 
 def drawGrid():
     cellWidth = 20;
@@ -59,7 +75,7 @@ def drawGrid():
 
     for column in range(0, columns):
         for row in range(0, rows):
-            pg.draw.rect(screen, (255, 255, 255), Rect(cellWidth * row, cellHeight * column, cellWidth, cellHeight), 1);
+            pg.draw.rect(screen, (0, 0, 0), Rect(cellWidth * row, cellHeight * column, cellWidth, cellHeight), 1);
 
 
 BLACK = (0, 0, 0);
@@ -68,6 +84,7 @@ width = 1260;
 height = 750;
 
 pg.init();
+clock = pg.time.Clock();
 screen = pg.display.set_mode((width, height));
 pg.display.set_caption("Snek gaem");
 running = True;
@@ -76,6 +93,9 @@ snake.updateLocVars();
 
 while running:
     for event in pg.event.get():
+        if event.type == KEYDOWN:
+            if event.key == K_SPACE:
+                snake.grow();
         if event.type == QUIT:
             running = False;
     
@@ -83,5 +103,6 @@ while running:
     snake.update();
     drawGrid();
     pg.display.update();
+    clock.tick(60);
 
 pg.quit();
