@@ -135,7 +135,8 @@ while running:
     for event in pg.event.get():
         if event.type == KEYDOWN:
             if event.key == K_SPACE:
-                snake.grow();
+                pass;
+                #snake.grow();
         if event.type == QUIT:
             running = False;
 
