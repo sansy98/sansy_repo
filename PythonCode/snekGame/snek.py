@@ -96,9 +96,10 @@ class Food():
         self.drawFood();
 
     def respawn(self):
-            self.x = random.choice(range(10, 1251, 20));
-            self.y = random.choice(range(10, 741, 20));
-            self.drawFood();
+        self.x = random.choice(range(10, 1251, 20));
+        self.y = random.choice(range(10, 741, 20));
+        self.drawFood();
+        
     
     def drawFood(self):
         pg.draw.circle(screen, (255, 0 ,0), (self.x, self.y), 10);
