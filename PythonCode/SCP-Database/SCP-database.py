@@ -39,6 +39,7 @@ def fetchSCPs():
 
 
 spcsArray = fetchSCPs()
-with open("PythonCode/SCP-Database/scps.json", "w") as jsonFile:
+with open("PythonCode/SCP-Database/scpS.json", "w") as jsonFile:
     for spc in spcsArray:
-        json.dump(spc.__dict__ , jsonFile, indent = 2)
+        json.dump(json.dumps(spc.__dict__) , jsonFile)
+        jsonFile.write('\n')
