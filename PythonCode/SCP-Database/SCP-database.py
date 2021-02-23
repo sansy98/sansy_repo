@@ -13,7 +13,7 @@ def fetchSCPs():
     url = "https://the-scp.foundation/object/scp-"
     spcs = []
 
-    for i in range(1, 4000):                        #After testing, set range upper bound to 4000
+    for i in range(1, 101):                        #After testing, set range upper bound to 4000
         if i < 10:
             currUrl = url + "00" + str(i)
         elif i >= 10 and i < 100:
@@ -21,6 +21,7 @@ def fetchSCPs():
         else:
             currUrl = url + str(i)
 
+        print("Fetching : " + str(i))
         response = requests.get(currUrl)
         if response.status_code == 200:
             newScp = Scp("", "", "", [])
@@ -39,7 +40,15 @@ def fetchSCPs():
 
 
 spcsArray = fetchSCPs()
+<<<<<<< HEAD
 with open("PythonCode/SCP-Database/scpS.json", "w") as jsonFile:
     for spc in spcsArray:
         json.dump(json.dumps(spc.__dict__) , jsonFile)
         jsonFile.write('\n')
+=======
+with open("PythonCode/SCP-Database/scps.json", "w") as jsonFile:
+    for scp in spcsArray:
+        print("Dumping " + str(scp.__dict__))
+        json.dump(str(scp.__dict__), jsonFile)
+        json.dump("\n", jsonFile)
+>>>>>>> 75acb49298e2f3b59e471af70a1cbf28ee00f687
