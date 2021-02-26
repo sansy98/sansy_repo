@@ -1,3 +1,6 @@
+import pygame as pg
+from pygame.locals import *
+
 
 RGBS = {
     0 : (7,8,8), 1 : (153,51,17), 2 : (221,119,17), 3 : (255,255,51), 4 : (85,170,68), 
@@ -17,3 +20,22 @@ FADINGS = {
     7 : range(-2,4), 8 : range(-1,5), 9 : range(0,4), 10 : range(-1,5), 11 : range(-2,4), 12 : range(-3,3),
     13 : range(-3,1), 14 : range(-2,2), 15 : range(-1,3)
 }
+
+
+class Sprite():
+    
+    def __init__(self, file, parentSurface, coords):
+        self.image = pg.image.load(file)
+        self.width = self.image.get_width()
+        self.height = self.image.get_height()
+        self.size = (self.width, self.height)
+        self.rect = self.image.get_rect()
+        self.parentSurface = parentSurface
+        self.coords = coords
+
+        self.draw();
+    
+    def draw(self):
+        self.image.blit(self.parentSurface, self.coords)
+        pg.draw.rect(self.parentSurface, Palette["Red"], self.rect)
+        pg.display.update()
