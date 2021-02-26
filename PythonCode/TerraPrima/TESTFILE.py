@@ -1,3 +1,0 @@
-import renderer
-
-renderer.placeholder()
