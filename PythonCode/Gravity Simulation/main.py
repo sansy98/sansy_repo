@@ -39,7 +39,7 @@ class Particle():
             self.v += g/60                              #60 fps
             self.y += self.v/2                          #60 fps but it's 2 because 30px=1m so 60/30 = 2
             if self.y+20 >= SIZE and self.isFalling: 
-                self.v = -self.v/(1.0 + self.m/100)     #Calculates bounce negative velocity, the more massive the object is, the less it will bounce
+                self.v = -self.v/(1.0 + self.m/10)     #Calculates bounce negative velocity, the more massive the object is, the less it will bounce
                 self.isFalling = False
             if not self.isFalling and self.v < 5 and self.v > -5:
                 self.h = self.d
@@ -70,14 +70,11 @@ if __name__ == "__main__":
         R = 6501                #Defaults to Earth's value
     R *= 1000                   #Converts radius from km to m
 
-    try:
-        m = float(input("Introduce la masa del objeto en kg(Ejm 3): "))
-    except ValueError:
-        m = 3                   #Defaults to 3kg
-
+    m = 1           #Next particle's mass starts at 1 by default
     g = (G*M)/R**2  #Calculates the gravitational acceleration using Newton's law of universal gravitation
 
     pg.init()
+    displayFont = pg.font.SysFont('Arial', 20)
     clock = pg.time.Clock()
     screen = pg.display.set_mode((SIZE, SIZE))
     pg.display.set_caption("Gravity Simulator")
@@ -93,14 +90,24 @@ if __name__ == "__main__":
             if event.type == MOUSEBUTTONDOWN:
                 started = True
                 particles.append(Particle(pg.mouse.get_pos(), m))
+            if event.type == KEYDOWN:
+                if event.key == K_UP: m += 1               #Increments next particle's mass
+                if event.key == K_DOWN and m>1: m -= 1     #Decrements next particle's mass
+                if event.key == K_LEFT: m = 1              #Resets next particle's mass (Defaults it to 1)
         
         screen.fill((255, 255, 255))
         if started:
             for particle in particles:
                 particle.update(g)                                                  #Updates particle
                 pg.draw.circle(screen, (255, 0, 0), (particle.x, particle.y), 20)   #Draws particle
+        
+        #TEXT DISPLAYING
+        massDisplaySurface = displayFont.render(f"Prox. masa: {m}", False, (0, 0, 0))
+        screen.blit(massDisplaySurface, (0, 0))
 
-                #FOR DEBUGGING PURPOSE:
-                #print(f"v: {particle.v} | g: {g} | isFalling: {particle.isFalling} | hasStopped: {particle.hasStopped}")
+        #FOR DEBUGGING PURPOSE:
+        #print(m)
+        #print(f"v: {particle.v} | g: {g} | isFalling: {particle.isFalling} | hasStopped: {particle.hasStopped}")
+        
         pg.display.update()
                 
