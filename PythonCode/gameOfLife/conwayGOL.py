@@ -36,9 +36,9 @@ class Grid():
     def setLiving(self):
         for column in range(0, self.columns):
             for row in range(0, self.rows):
-                if not self.bodies[column][row].alive and pg.mouse.get_pos()[0] in range(self.bodies[column][row].x, self.bodies[column][row].x+10) and pg.mouse.get_pos()[1] in range(self.bodies[column][row].y, self.bodies[column][row].y+10):
+                if not self.bodies[column][row].alive and pg.mouse.get_pos()[0] in range(self.bodies[column][row].x, self.bodies[column][row].x+10) and pg.mouse.get_pos()[1] in range(self.bodies[column][row].y, self.bodies[column][row].y+10) and not delMode:
                     self.bodies[column][row].alive = True;
-                elif self.bodies[column][row].alive and pg.mouse.get_pos()[0] in range(self.bodies[column][row].x, self.bodies[column][row].x+10) and pg.mouse.get_pos()[1] in range(self.bodies[column][row].y, self.bodies[column][row].y+10):
+                elif self.bodies[column][row].alive and pg.mouse.get_pos()[0] in range(self.bodies[column][row].x, self.bodies[column][row].x+10) and pg.mouse.get_pos()[1] in range(self.bodies[column][row].y, self.bodies[column][row].y+10) and delMode:
                     self.bodies[column][row].alive = False;
 
     def checkStatus(self):
@@ -89,6 +89,8 @@ class Grid():
 WIDTH = 1260;
 HEIGHT = 750;
 running = True;
+mouseDown = False;
+delMode = False;
 
 clock = pg.time.Clock();
 screen = pg.display.set_mode((WIDTH, HEIGHT));
@@ -102,13 +104,20 @@ while running:
         if event.type == QUIT:
             running = False;
         if event.type == MOUSEBUTTONDOWN:
-            grid.setLiving();
+            mouseDown = True;
+            #grid.setLiving();
+        if event.type == MOUSEBUTTONUP:
+            mouseDown = False;
         if event.type == KEYDOWN:
             if event.key == K_SPACE and not simulationStart:    simulationStart = True;
             elif event.key == K_SPACE and simulationStart:      simulationStart = False;
             if event.key == K_r: grid.restart();
+            if event.key == K_d: delMode = not delMode
 
-    
+
+    if mouseDown == True: grid.setLiving();
+        
+        
     if simulationStart: grid.checkStatus();
     screen.fill((255, 255, 255));
     grid.draw(screen);
