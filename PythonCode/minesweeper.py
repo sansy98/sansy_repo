@@ -6,6 +6,7 @@ import math
 
 BLACK = (0, 0 ,0)
 WHITE = (255, 255, 255)
+DEFAULT = (200, 200, 200)
 BLUE = (0, 0, 255)         #1
 GREEN = (0, 255, 0)        #2
 RED = (255, 0, 0)          #3
@@ -18,14 +19,7 @@ PINK = (255,192,203)       #8
 
 
 #REFERENCES FOR COLORS
-C1 = BLUE
-C2 = GREEN
-C3 = RED
-C4 = VIOLET
-C5 = YELLOW
-C6 = CYAN
-C7 = ORANGE
-C8 = PINK
+colorOrderedTuple = (DEFAULT, BLUE, GREEN, RED, VIOLET, YELLOW, CYAN, ORANGE, PINK)
 
 pg.init()
 
@@ -43,7 +37,7 @@ COLUMNS = 16
 
 
 class Cell():
-    def __init__(self, x = None, y = None, rect = None, x2 = None, y2 = None, isMine = False, nearMines = 0):
+    def __init__(self, x = None, y = None, rect = None, x2 = None, y2 = None, isMine = False, nearMines = 0, isVisible = False):
         self.x = x;
         self.y = y;
         self.x2 = x+math.floor(min(screenSize[0], screenSize[1])/max(ROWS,COLUMNS));
@@ -51,6 +45,7 @@ class Cell():
         self.isMine = isMine
         self.rect = Rect(x, y, self.x2-x, self.y2-y);
         self.nearMines = nearMines;
+        self.isVisible = isVisible;
 
 
 class Grid():
@@ -124,22 +119,71 @@ class Grid():
                     if column == 0:
                         pass
                     elif self.bodies[column-1][row].isMine: self.bodies[column][row].nearMines += 1
-                    
+    
+    def updateCellsAround(self, column, row):
+        if self.bodies[column-1][row-1].nearMines == 0 and not self.bodies[column-1][row-1].isMine and not self.bodies[column-1][row-1].isVisible: 
+            self.bodies[column-1][row-1].isVisible = True
+            self.updateCellsAround(column-1, row-1)
+        
+        if self.bodies[column][row-1].nearMines == 0 and not self.bodies[column][row-1].isMine and not self.bodies[column][row-1].isVisible: 
+            self.bodies[column][row-1].isVisible = True
+            self.updateCellsAround(column, row-1)
+        
+        if self.bodies[column+1][row-1].nearMines == 0 and not self.bodies[column+1][row-1].isMine and not self.bodies[column+1][row-1].isVisible:
+            self.bodies[column+1][row-1].isVisible = True
+            self.updateCellsAround(column+1, row-1)
+        
+        if self.bodies[column+1][row].nearMines == 0 and not self.bodies[column+1][row].isMine and not self.bodies[column+1][row].isVisible:
+            self.bodies[column+1][row].isVisible = True
+            self.updateCellsAround(column+1, row)
+        
+        if self.bodies[column+1][row+1].nearMines == 0 and not self.bodies[column+1][row+1].isMine and not self.bodies[column+1][row+1].isVisible:
+            self.bodies[column+1][row+1].isVisible = True
+            self.updateCellsAround(column+1, row+1)
+
+        if self.bodies[column][row+1].nearMines == 0 and not self.bodies[column][row+1].isMine and not self.bodies[column][row+1].isVisible:
+            self.bodies[column][row+1].isVisible = True
+            self.updateCellsAround(column, row+1)
+
+        if self.bodies[column-1][row+1].nearMines == 0 and not self.bodies[column-1][row+1].isMine and not self.bodies[column-1][row+1].isVisible:
+            self.bodies[column-1][row+1].isVisible = True
+            self.updateCellsAround(column-1, row+1)
+
+        if self.bodies[column-1][row].nearMines == 0 and not self.bodies[column-1][row].isMine and not self.bodies[column-1][row].isVisible:
+            self.bodies[column-1][row].isVisible = True
+            self.updateCellsAround(column-1, row)
+    
+    def uncoverCell(self):
+        for column in range(0, self.columns):
+            for row in range(0, self.rows):
+                if not self.bodies[column][row].isVisible and pg.mouse.get_pos()[0] in range(self.bodies[column][row].x, self.bodies[column][row].x2) and pg.mouse.get_pos()[1] in range(self.bodies[column][row].y, self.bodies[column][row].y2):
+                    self.bodies[column][row].isVisible = True
+                    if self.bodies[column][row].nearMines == 0:
+                        self.updateCellsAround(column, row)
+    
+    def clearMinesAround(self):
+        cellsColumn = 0
+        cellsRow = 0
+        
+        for column in range(0, self.columns):
+            for row in range(0, self.rows):
+                if pg.mouse.get_pos()[0] in range(self.bodies[column][row].x, self.bodies[column][row].x2) and pg.mouse.get_pos()[1] in range(self.bodies[column][row].y, self.bodies[column][row].y2):
+                    cellsColumn = column
+                    cellsRow = row
+        
+        for column in range(cellsColumn-2, cellsColumn+2):
+            for row in range(cellsRow-2, cellsRow+2):
+                self.bodies[column][row].isMine = False
     
     
     def draw(self, display):
         for column in range(0, self.columns):
             for row in range(0, self.rows):
-                if self.bodies[column][row].isMine: pg.draw.rect(display, (0, 50, 75), self.bodies[column][row].rect, 0);
-                elif self.bodies[column][row].nearMines == 1: pg.draw.rect(display, C1, self.bodies[column][row].rect, 0);
-                elif self.bodies[column][row].nearMines == 2: pg.draw.rect(display, C2, self.bodies[column][row].rect, 0);
-                elif self.bodies[column][row].nearMines == 3: pg.draw.rect(display, C3, self.bodies[column][row].rect, 0);
-                elif self.bodies[column][row].nearMines == 4: pg.draw.rect(display, C4, self.bodies[column][row].rect, 0);
-                elif self.bodies[column][row].nearMines == 5: pg.draw.rect(display, C5, self.bodies[column][row].rect, 0);
-                elif self.bodies[column][row].nearMines == 6: pg.draw.rect(display, C6, self.bodies[column][row].rect, 0);
-                elif self.bodies[column][row].nearMines == 7: pg.draw.rect(display, C7, self.bodies[column][row].rect, 0);
-                elif self.bodies[column][row].nearMines == 8: pg.draw.rect(display, C8, self.bodies[column][row].rect, 0);
-                else: pg.draw.rect(display, (200, 200, 200), self.bodies[column][row].rect, 1);
+                if not self.bodies[column][row].isVisible:
+                    pg.draw.rect(display, DEFAULT, self.bodies[column][row].rect, 1)
+                else:
+                    if self.bodies[column][row].isMine: pg.draw.rect(display, (0, 50, 75), self.bodies[column][row].rect, 0);
+                    else: pg.draw.rect(display, colorOrderedTuple[self.bodies[column][row].nearMines], self.bodies[column][row].rect, 0);
                 
     
     def initialise(self):
@@ -171,12 +215,19 @@ class Grid():
 grid = Grid()
 grid.initialise()
 
+firstClickPerformed = False
 
 while running:
     clock.tick(60)
     
     for event in pg.event.get():
         if event.type == pg.QUIT: running = False
+        if event.type == MOUSEBUTTONDOWN and firstClickPerformed: grid.uncoverCell()
+        elif event.type == MOUSEBUTTONDOWN and not firstClickPerformed:
+            grid.clearMinesAround()
+            grid.set_near_mines()
+            grid.uncoverCell()
+            firstClickPerformed = True
         
     display.fill(WHITE)
     grid.draw(display)
